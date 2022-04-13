@@ -1,0 +1,64 @@
+.col(style='margin-top: 2%;margin-bottom: 2%;')
+  section.d-flex.flex-column.flex-sm-row.flex-md-row.flex-lg-row.flex-xl-row
+    input#upload-input.d-none(type="file" name='uploads[]' multiple='multiple')
+    button.btn.btn-primary.btn-lg.d-flex.justify-content-center(type="button" id="upload-btn" style="font-size: 25px;font-weight: normal;")
+          i.fa.fa-upload(style="margin-right: 15px;")
+          span Upload
+    div(style='width: 4em;height: 2em;')
+    a(href="/availableFiles")
+      button.btn.btn-primary.btn-lg.d-flex.justify-content-center(type='button' style='font-size: 25px;font-weight: normal;')
+        i.fa.fa-download(style='margin-right: 15px;')
+        span Files Shared With You
+    div(style='width: 4em;height: 2em;')
+    a(href="/mainPage")
+      button.btn.btn-primary.btn-lg.d-flex.justify-content-center(type='button' style='font-size: 25px;font-weight: normal;')
+        i.fa.fa-file(style='margin-right: 15px;')
+        span Your Files
+  div(style='padding-top: 3%; display: none;' id="progressBarDiv")
+    .container
+      .row
+        .col-md-12
+          .progress
+            .progress-bar(role='progressbar' aria-valuenow='0' aria-valuemin='0' aria-valuemax='100' style='width: 0%;')
+.table-responsive.table-borderless(style='padding: 2%;')
+  table.table.table-striped.table-bordered.table-hover.table-dark
+    thead
+      tr
+        th(style='width: 50%;') Your Files
+        th(style='width: 50%;') Options
+    tbody
+        each file in files
+            tr
+                td #{file.fileName}
+                td.d-flex.flex-column.flex-sm-row.flex-md-row.flex-lg-row.flex-xl-row
+                    button.btn.btn-primary.btn-lg.d-flex.justify-content-center(value=file.urlShortCode onclick="deleteFile(this.value)" type='button' style='font-size: 25px;font-weight: normal;')
+                        i.fa.fa-remove(style='margin-right: 15px;')
+                        span Delete
+                    div(style='width: 4em;height: 2em;')
+                    button.btn.btn-primary.btn-lg.d-flex.justify-content-center(value=file.urlShortCode type='button' onclick="openForm(this.value)" style='font-size: 25px;font-weight: normal;')
+                        i.fa.fa-share-alt(style='margin-right: 15px;')
+                        span Share
+                    div( class="form-popup" id=file.urlShortCode)
+                      form(method='POST' action="/shareFile" class="form-container")
+                        h3 Share File
+                        label(for='email')
+                          b Email
+                        input(type='text' placeholder='Enter Email' name='userEmail' required='')
+                        input(type='hidden' name='urlShortCodeID' value=file.urlShortCode)
+                        button.btn(type='submit') Share
+                        button.btn.cancel(value=file.urlShortCode type='button' onclick='closeForm(this.value)') Close
+                    div(style='width: 4em;height: 2em;')
+                    button.btn.btn-primary.btn-lg.d-flex.justify-content-center(value=file.urlShortCode onclick="copyText(this.value)" style='font-size: 25px;font-weight: normal;')
+                        i.fa.fa-pencil(style='margin-right: 15px;')
+                        span Download Link
+                    div(style='width: 4em;height: 2em;')
+                    form.btn.btn-primary.btn-lg.d-flex.justify-content-center(method='POST'  action='/download/'+ file.urlShortCode style="all:revert;")
+                       button.btn.btn-primary.btn-lg.d-flex.justify-content-center(type="submit" style='font-size: 25px;font-weight: normal; width:100%')
+                        i.fa.fa-download(style='margin-right: 15px;')
+                        span Download
+script(src='/assets/js/helperFunctions.js')
+script(src='/assets/js/jquery.min.js')
+script(src='/assets/bootstrap/js/bootstrap.min.js')
+script(src='/assets/js/WOWSlider-about-us.js')
+script(src='../assets/js/upload.js')
+link(rel="stylesheet", href="/assets/css/ShareFile.css")

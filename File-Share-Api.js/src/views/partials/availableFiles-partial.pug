@@ -1,0 +1,41 @@
+.col(style='margin-top: 2%;margin-bottom: 2%;')
+  section.d-flex.flex-column.flex-sm-row.flex-md-row.flex-lg-row.flex-xl-row
+    form(method='POST' action='/upload' enctype='multipart/form-data')
+        input.d-none(type="file" onchange="this.form.submit()" id="selectedFile" name="upload")
+        input(type="hidden" name="userHidden" value=user.id)
+        button.btn.btn-primary.btn-lg.d-flex.justify-content-center(type="button" onclick="document.getElementById('selectedFile').click();" style="font-size: 25px;font-weight: normal;")
+          i.fa.fa-upload(style="margin-right: 15px;")
+          span Upload
+    div(style='width: 4em;height: 2em;')
+    a(href="/availableFiles")
+      button.btn.btn-primary.btn-lg.d-flex.justify-content-center(type='button' style='font-size: 25px;font-weight: normal;')
+        i.fa.fa-download(style='margin-right: 15px;')
+        span Files Shared With You
+    div(style='width: 4em;height: 2em;')
+    a(href="/mainPage")
+      button.btn.btn-primary.btn-lg.d-flex.justify-content-center(type='button' style='font-size: 25px;font-weight: normal;')
+        i.fa.fa-file(style='margin-right: 15px;')
+        span Your Files
+.table-responsive.table-borderless(style='padding: 2%;')
+  table.table.table-striped.table-bordered.table-hover.table-dark
+    thead
+      tr
+        th(style='width: 50%;') Your Files
+        th(style='width: 50%;') Options
+    tbody
+        each file in files
+            tr
+                td #{file.fileName}
+                td.d-flex.flex-column.flex-sm-row.flex-md-row.flex-lg-row.flex-xl-row
+                    button.btn.btn-primary.btn-lg.d-flex.justify-content-center(value=file.urlShortCode onclick="copyText(this.value)" style='font-size: 25px;font-weight: normal;')
+                        i.fa.fa-pencil(style='margin-right: 15px;')
+                        span Download Link
+                    div(style='width: 4em;height: 2em;')
+                    form.btn.btn-primary.btn-lg.d-flex.justify-content-center(method='POST'  action='/download/'+ file.urlShortCode style="all:revert;")
+                       button.btn.btn-primary.btn-lg.d-flex.justify-content-center(type="submit" style='font-size: 25px;font-weight: normal; width:100%')
+                        i.fa.fa-download(style='margin-right: 15px;')
+                        span Download
+script(src='/assets/js/helperFunctions.js')
+script(src='/assets/js/jquery.min.js')
+script(src='/assets/bootstrap/js/bootstrap.min.js')
+script(src='/assets/js/WOWSlider-about-us.js')

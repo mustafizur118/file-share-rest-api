@@ -1,0 +1,71 @@
+"use strict";
+var express = require("express");
+var router = express.Router();
+var Users = require("../models/user");
+var bcrypt = require("bcryptjs");
+var jwt = require("jsonwebtoken");
+
+/*POST for login*/
+//This will check if there is token, if not it will assign a token to the cookie
+router.post("/", async function (req, res) {
+  let email = await req.body.email;
+  let password = await req.body.password;
+
+  var userValue = null;
+
+  await Users.findOne(
+    {
+      email: email,
+    },
+    function (err, user) {
+      if (err) {
+        console.log(err);
+        res.sendStatus(401);
+      }
+
+      if (!user) {
+        console.log("Not a user");
+        res.sendStatus(401);
+      } else {
+        //Compare hashed passwords
+        if (!bcrypt.compareSync(password, user.password)) {
+          res.sendStatus(401);
+        } else {
+          userValue = user;
+        }
+      }
+    }
+  );
+
+  let payload = { email };
+  //For access token
+  let accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+    algorithm: "HS256",
+    expiresIn: process.env.ACCESS_TOKEN_LIFE,
+  });
+
+  let refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
+    algorithm: "HS256",
+    expiresIn: process.env.REFRESH_TOKEN_LIFE,
+  });
+
+  if (userValue) {
+    Users.findByIdAndUpdate(
+      userValue.id,
+      { refreshToken: refreshToken },
+      function (err, model) {
+        if (err) console.log(err);
+        console.log("Token updated successfully to the database");
+      }
+    );
+    res.cookie("jwt", accessToken, { httpOnly: true });
+    res.send({
+      user: {
+        email: userValue.email,
+      },
+      accessToken,
+    });
+  }
+});
+
+module.exports = router;
